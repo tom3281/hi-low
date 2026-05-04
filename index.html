@@ -402,8 +402,7 @@
       <p style="font-size:13px;line-height:1.7;color:rgba(232,234,242,0.85);margin:0">
         次のカードが今のカードより<b style="color:#66ff8e">上</b>か<b style="color:#ffb866">下</b>か当てる。<br>
         外したら <b style="color:#ffd76e">1杯</b> 飲む。<br>
-        同じ数字なら<b style="color:#00d4ff">もう一回</b>選び直し。<br>
-        連続正解で<b style="color:#00d4ff">最長記録</b>を更新。
+        同じ数字なら<b style="color:#00d4ff">もう一回</b>選び直し。
       </p>
     </div>
     <div class="footer-actions">
@@ -416,7 +415,6 @@
   <div class="screen play-screen" id="playScreen">
     <div class="status-bar">
       <span>累計 <b id="totalDrinks" style="color:var(--danger)">0</b> 杯</span>
-      <span>最長 <b id="bestStreak" style="color:var(--gold)">0</b> 連続</span>
       <span class="deck-left">残り <b id="deckLeft">52</b></span>
     </div>
 
@@ -454,14 +452,10 @@
       <h1 style="font-size:clamp(28px,9vw,46px)">SESSION</h1>
       <div class="jp">セッション結果</div>
     </div>
-    <div class="panel" style="text-align:center;padding:24px 16px">
+    <div class="panel" style="text-align:center;padding:28px 16px">
       <div style="font-size:11px;letter-spacing:4px;color:var(--dim);margin-bottom:6px">累計</div>
       <div style="font-family:'Inter',system-ui,sans-serif;font-size:64px;font-weight:900;line-height:1;color:var(--danger);text-shadow:0 0 30px rgba(255,77,110,0.4)">
         <span id="finalDrinks">0</span><span style="font-size:24px;color:var(--steel-1);margin-left:6px;letter-spacing:2px">杯</span>
-      </div>
-      <div style="margin-top:18px;font-size:12px;letter-spacing:3px;color:var(--steel-1)">
-        最長連続 <b style="color:var(--gold);font-size:16px;letter-spacing:1px">
-          <span id="finalBest">0</span></b> 回
       </div>
     </div>
     <div class="footer-actions">
@@ -524,7 +518,6 @@ let deck = [];           // remaining cards
 let prevCard = null;     // currently visible card (the comparison card)
 let streak = 0;          // current streak count
 let totalDrinks = 0;     // session total
-let bestStreak = 0;      // longest streak this session
 let waiting = false;     // true while reveal animation in progress
 
 function $(id) { return document.getElementById(id); }
@@ -601,7 +594,6 @@ function startSession() {
   prevCard = drawCard();
   streak = 0;
   totalDrinks = 0;
-  bestStreak = 0;
   showScreen("play");
   updatePlayUI();
   $("prevSlot").innerHTML = cardHTML(prevCard, { flipped: true, dealIn: true });
@@ -611,7 +603,6 @@ function startSession() {
 
 function updatePlayUI() {
   $("totalDrinks").textContent = totalDrinks;
-  $("bestStreak").textContent = bestStreak;
   $("deckLeft").textContent = deck.length;
   $("streakNum").textContent = streak;
 }
@@ -643,7 +634,6 @@ function resolveRound(next, choice) {
 
   if (correct) {
     streak++;
-    if (streak > bestStreak) bestStreak = streak;
     prevCard = next;
     showResult("ok", "正解!", `連続 <b>${streak}</b> 回`);
   } else {
@@ -685,13 +675,11 @@ $("loBtn").addEventListener("click", () => predict("lo"));
 $("startBtn").addEventListener("click", startSession);
 $("quitBtn").addEventListener("click", () => {
   $("finalDrinks").textContent = totalDrinks;
-  $("finalBest").textContent = bestStreak;
   showScreen("end");
 });
 $("restartBtn").addEventListener("click", startSession);
 $("resetBtn").addEventListener("click", () => {
   totalDrinks = 0;
-  bestStreak = 0;
   showScreen("enter");
 });
 
