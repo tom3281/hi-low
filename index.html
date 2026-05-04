@@ -122,27 +122,23 @@
     font-size: 14px; letter-spacing: 0;
   }
 
-  .stake-row {
-    display: flex; justify-content: center; align-items: baseline; gap: 6px;
-    margin-bottom: 14px;
-  }
-  .stake-row .label { font-size: 10px; letter-spacing: 4px; color: var(--dim); }
-  .stake-row .num {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 38px; font-weight: 900; line-height: 1;
-    color: var(--gold);
-    text-shadow: 0 0 20px rgba(255,215,110,0.4);
-  }
-  .stake-row .num.danger {
-    color: var(--danger);
-    text-shadow: 0 0 22px rgba(255,77,110,0.5);
-  }
-  .stake-row .cup { font-size: 13px; color: var(--steel-1); letter-spacing: 3px; }
   .streak-row {
     text-align: center; margin-bottom: 16px;
-    font-size: 11px; letter-spacing: 4px; color: var(--steel-1);
+    font-size: 12px; letter-spacing: 4px; color: var(--steel-1);
   }
-  .streak-row b { color: var(--cyan); font-weight: 800; font-size: 14px; }
+  .streak-row .big {
+    color: var(--cyan); font-weight: 800;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 38px; line-height: 1; letter-spacing: 0;
+    text-shadow: 0 0 18px rgba(0,212,255,0.4);
+    display: inline-block; margin: 0 4px;
+    vertical-align: middle;
+  }
+  .stake-hint {
+    text-align: center; margin-bottom: 8px;
+    font-size: 10px; letter-spacing: 4px; color: var(--dim);
+  }
+  .stake-hint b { color: var(--gold); font-weight: 800; }
 
   /* ─── Card pair ─── */
   .card-pair {
@@ -267,22 +263,6 @@
   }
   .choice-row .arrow-icon { font-size: 22px; margin-right: 6px; }
 
-  .safe-btn {
-    width: 100%; padding: 14px;
-    background: rgba(255,215,110,0.10);
-    border: 1px solid rgba(255,215,110,0.5);
-    color: var(--gold); font-weight: 800;
-    letter-spacing: 5px; font-size: 13px;
-    border-radius: 12px; cursor: pointer;
-    transition: transform .08s, background .15s;
-    font-family: inherit;
-  }
-  .safe-btn:active { transform: translateY(2px); }
-  .safe-btn:disabled {
-    opacity: 0.3; cursor: not-allowed;
-    background: transparent; color: var(--dim); border-color: var(--steel-0);
-  }
-
   /* ─── Result overlay ─── */
   .result-overlay {
     position: absolute; inset: 0;
@@ -310,6 +290,10 @@
   .result-overlay .verdict.safe {
     color: var(--gold);
     text-shadow: 0 0 30px rgba(255,215,110,0.5);
+  }
+  .result-overlay .verdict.draw {
+    color: var(--cyan);
+    text-shadow: 0 0 30px rgba(0,212,255,0.5);
   }
   .result-overlay .detail {
     font-size: 14px; letter-spacing: 2px; color: var(--steel-1);
@@ -398,7 +382,7 @@
   @media (max-width: 360px) {
     .card-pair { gap: 6px; }
     .card-slot { width: 42%; }
-    .stake-row .num { font-size: 32px; }
+    .streak-row .big { font-size: 32px; }
   }
 </style>
 </head>
@@ -417,8 +401,8 @@
       <h2>遊びかた</h2>
       <p style="font-size:13px;line-height:1.7;color:rgba(232,234,242,0.85);margin:0">
         次のカードが今のカードより<b style="color:#66ff8e">上</b>か<b style="color:#ffb866">下</b>か当てる。<br>
-        外したら <b style="color:#ffd76e">外したら ○杯</b> 飲む。<br>
-        連続成功で<b style="color:#ff8aa1">ステークが上がる</b>。
+        外したら <b style="color:#ffd76e">1杯</b> 飲む。<br>
+        連続正解で<b style="color:#00d4ff">最長記録</b>を更新。
       </p>
     </div>
     <div class="footer-actions">
@@ -435,13 +419,8 @@
       <span class="deck-left">残り <b id="deckLeft">52</b></span>
     </div>
 
-    <div class="stake-row">
-      <span class="label">外したら</span>
-      <span class="num" id="stakeNum">1</span>
-      <span class="cup">杯</span>
-    </div>
     <div class="streak-row">
-      連続成功 <b id="streakNum">0</b> 回
+      連続 <span class="big" id="streakNum">0</span> 回
     </div>
 
     <div class="card-pair">
@@ -450,11 +429,11 @@
       <div class="card-slot" id="nextSlot"></div>
     </div>
 
+    <div class="stake-hint">外したら <b>1杯</b></div>
     <div class="choice-row">
       <button class="btn-hi" id="hiBtn"><span class="arrow-icon">▲</span>HI</button>
       <button class="btn-lo" id="loBtn"><span class="arrow-icon">▼</span>LO</button>
     </div>
-    <button class="safe-btn" id="safeBtn" disabled>SAFE で連続リセット</button>
 
     <div class="footer-actions">
       <button class="btn btn-ghost" id="quitBtn">セッション終了</button>
@@ -505,18 +484,10 @@
       <dd>連続成功カウントが +1。続けて次のカードを予想する。</dd>
 
       <dt>外したら</dt>
-      <dd><b>「外したら ○杯」</b> の数を一気飲み。<br>
-        連続成功はリセット。</dd>
-
-      <dt>SAFE</dt>
-      <dd>1回でも当てた後ならいつでも降りられる。<b>飲まずに</b>連続をリセット。</dd>
-
-      <dt>ステーク</dt>
-      <dd>失敗時の杯数 = <b>連続成功 ÷ 5 + 1</b>（小数点切り捨て）<br>
-        0〜4回 → 1杯 / 5〜9回 → 2杯 / 10〜14回 → 3杯 …</dd>
+      <dd><b>1杯</b> 飲む。連続成功はリセット。</dd>
 
       <dt>引き分け</dt>
-      <dd>同じ数字（HIにもLOにも当たらない）が出たら<b>当たり扱い</b>。</dd>
+      <dd>同じ数字が出たら<b>もう一度選ぶ</b>。<br>連続成功は変わらない。</dd>
 
       <dt>カード強さ</dt>
       <dd>A=1（最弱） → 2 → … → K=13（最強）</dd>
@@ -554,10 +525,6 @@ let streak = 0;          // current streak count
 let totalDrinks = 0;     // session total
 let bestStreak = 0;      // longest streak this session
 let waiting = false;     // true while reveal animation in progress
-
-// Drink-on-fail formula: floor(streak / 5) + 1.
-// → 1杯 for streaks 0–4, 2杯 for 5–9, 3杯 for 10–14, …
-function stakeFor(s) { return Math.floor(s / 5) + 1; }
 
 function $(id) { return document.getElementById(id); }
 function showScreen(name) {
@@ -646,11 +613,6 @@ function updatePlayUI() {
   $("bestStreak").textContent = bestStreak;
   $("deckLeft").textContent = deck.length;
   $("streakNum").textContent = streak;
-  const stake = stakeFor(streak);
-  const stakeEl = $("stakeNum");
-  stakeEl.textContent = stake;
-  stakeEl.classList.toggle("danger", stake >= 3);
-  $("safeBtn").disabled = streak === 0;
 }
 
 function predict(choice) {
@@ -669,27 +631,29 @@ function predict(choice) {
 }
 
 function resolveRound(next, choice) {
-  // Tie counts as correct (more drama, fewer abrupt ends)
-  let correct;
-  if (next.v === prevCard.v) correct = true;
-  else if (choice === "hi") correct = next.v > prevCard.v;
-  else correct = next.v < prevCard.v;
+  // Same card → redraw: no streak change, the player chooses HI/LO again
+  // against the new card (which is the same value but a different suit).
+  if (next.v === prevCard.v) {
+    prevCard = next;
+    showResult("draw", "引き分け", "同じ数字でした<br>もう一度選びましょう");
+    return;
+  }
+  const correct = choice === "hi" ? next.v > prevCard.v : next.v < prevCard.v;
 
   if (correct) {
     streak++;
     if (streak > bestStreak) bestStreak = streak;
     prevCard = next;
-    showResult("ok", "正解!", `連続 <b>${streak}</b> 回 / 次の失敗で <span class="big">${stakeFor(streak)}</span>杯`);
+    showResult("ok", "正解!", `連続 <b>${streak}</b> 回`);
   } else {
-    const drink = stakeFor(streak);
-    totalDrinks += drink;
+    totalDrinks += 1;
     // The revealed card becomes the new starting card so the deck
     // advances continuously between rounds.
     prevCard = next;
     streak = 0;
     const cardEl = $("nextSlot").querySelector(".card");
     if (cardEl) cardEl.classList.add("shake");
-    showResult("ng", "外れ", `<span class="big">${drink}</span>杯 飲む`);
+    showResult("ng", "外れ", `<span class="big">1</span>杯 飲む`);
   }
 }
 
@@ -716,12 +680,6 @@ $("continueBtn").addEventListener("click", () => {
 
 $("hiBtn").addEventListener("click", () => predict("hi"));
 $("loBtn").addEventListener("click", () => predict("lo"));
-$("safeBtn").addEventListener("click", () => {
-  if (streak === 0 || waiting) return;
-  // SAFE just resets the streak — no drink, deck untouched.
-  streak = 0;
-  showResult("safe", "SAFE", `連続をリセット<br>飲まずに続行`);
-});
 
 $("startBtn").addEventListener("click", startSession);
 $("quitBtn").addEventListener("click", () => {
