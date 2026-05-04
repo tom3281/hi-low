@@ -81,37 +81,6 @@
     color: var(--cyan); font-weight: 700;
   }
 
-  /* ─── Inputs ─── */
-  .player-inputs { display: flex; flex-direction: column; gap: 8px; }
-  .player-row {
-    display: flex; align-items: center; gap: 8px;
-  }
-  .player-row .num {
-    font-size: 11px; color: var(--dim); width: 22px; text-align: center;
-    letter-spacing: 1px; font-weight: 700;
-  }
-  .player-row input {
-    flex: 1;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: var(--bone); font-size: 15px; outline: none;
-    transition: all .15s;
-    font-family: inherit;
-  }
-  .player-row input:focus {
-    border-color: var(--cyan); background: rgba(0,212,255,0.08);
-  }
-  .player-row .rm {
-    background: transparent; border: 1px solid rgba(255,77,110,0.3);
-    color: var(--danger); width: 32px; height: 32px;
-    border-radius: 8px; font-size: 16px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    line-height: 1; padding: 0;
-  }
-  .player-row .rm:disabled { opacity: 0.25; cursor: not-allowed; }
-
   /* ─── Buttons ─── */
   .btn {
     width: 100%;
@@ -134,42 +103,9 @@
     color: var(--bone);
     letter-spacing: 3px;
   }
-  .btn-add {
-    background: rgba(0,212,255,0.08);
-    border: 1px dashed rgba(0,212,255,0.5);
-    color: var(--cyan);
-    letter-spacing: 3px;
-    font-size: 13px;
-    padding: 12px;
-    margin-top: 6px;
-  }
   .btn + .btn { margin-top: 8px; }
 
   .footer-actions { margin-top: auto; padding-top: 14px; }
-
-  /* ─── Turn intro screen ─── */
-  .turn-intro {
-    align-items: center; justify-content: center;
-    min-height: 60dvh; gap: 28px;
-  }
-  .turn-intro .who-label {
-    font-size: 11px; letter-spacing: 6px; color: var(--dim);
-  }
-  .turn-intro .who-name {
-    font-size: clamp(36px, 10vw, 52px);
-    font-weight: 900; letter-spacing: -0.02em;
-    background: linear-gradient(180deg, var(--cyan-glow), var(--cyan));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    text-shadow: 0 0 30px rgba(0,212,255,0.4);
-    text-align: center;
-    line-height: 1.1;
-    word-break: break-all;
-    padding: 0 8px;
-  }
-  .turn-intro .who-tap {
-    font-size: 11px; letter-spacing: 6px; color: var(--cyan);
-    animation: blink 1.4s ease-in-out infinite;
-  }
   @keyframes blink { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
 
   /* ─── Play screen ─── */
@@ -178,9 +114,13 @@
     display: flex; justify-content: space-between; align-items: center;
     padding: 4px 8px 14px;
     font-size: 11px; letter-spacing: 2px;
+    color: var(--steel-1);
   }
-  .status-bar .who-now { color: var(--cyan); font-weight: 800; }
   .status-bar .deck-left { color: var(--dim); }
+  .status-bar b {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 14px; letter-spacing: 0;
+  }
 
   .stake-row {
     display: flex; justify-content: center; align-items: baseline; gap: 6px;
@@ -394,27 +334,6 @@
   }
   .result-overlay button:active { transform: translateY(2px); }
 
-  /* ─── Standings ─── */
-  .standings { display: flex; flex-direction: column; gap: 6px; }
-  .standings-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 12px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 8px;
-    font-size: 13px;
-  }
-  .standings-row.top { background: rgba(255,215,110,0.10); border-color: rgba(255,215,110,0.4); }
-  .standings-row.bottom { background: rgba(255,77,110,0.10); border-color: rgba(255,77,110,0.45); }
-  .standings-row.now { box-shadow: 0 0 0 2px var(--cyan); }
-  .standings-row .nm { font-weight: 700; }
-  .standings-row .ct {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 800; letter-spacing: 1px;
-  }
-  .standings-row.top .ct { color: var(--gold); }
-  .standings-row.bottom .ct { color: var(--danger); }
-
   /* ─── Rules overlay ─── */
   .rules-overlay {
     position: fixed; inset: 0; z-index: 200;
@@ -489,34 +408,31 @@
 
   <!-- ===== ENTER ===== -->
   <div class="screen active" id="enterScreen">
-    <div class="title">
+    <div class="title" style="padding-top:60px;padding-bottom:30px">
       <h1>HI-LOW</h1>
       <div class="jp">ハイロー</div>
       <div class="tag">PUSH YOUR LUCK · CARD GAME</div>
     </div>
     <div class="panel">
-      <h2>プレイヤー <span id="playerCountLabel" style="opacity:.6;font-weight:400">(2/8)</span></h2>
-      <div class="player-inputs" id="playerInputs"></div>
-      <button class="btn-add" id="addPlayerBtn">＋ プレイヤーを追加</button>
+      <h2>遊びかた</h2>
+      <p style="font-size:13px;line-height:1.7;color:rgba(232,234,242,0.85);margin:0">
+        次のカードが今のカードより<b style="color:#66ff8e">上</b>か<b style="color:#ffb866">下</b>か当てる。<br>
+        外したら <b style="color:#ffd76e">外したら ○杯</b> 飲む。<br>
+        連続成功で<b style="color:#ff8aa1">ステークが上がる</b>。
+      </p>
     </div>
     <div class="footer-actions">
       <button class="btn btn-primary" id="startBtn">START</button>
-      <button class="btn-link-text" id="rulesBtn">ルールを見る</button>
+      <button class="btn-link-text" id="rulesBtn">詳しいルールを見る</button>
     </div>
-  </div>
-
-  <!-- ===== TURN INTRO ===== -->
-  <div class="screen turn-intro" id="turnScreen">
-    <div class="who-label">YOUR TURN</div>
-    <div class="who-name" id="turnName">-</div>
-    <div class="who-tap">タップで開始</div>
   </div>
 
   <!-- ===== PLAY ===== -->
   <div class="screen play-screen" id="playScreen">
     <div class="status-bar">
-      <span class="who-now" id="playWho">-</span>
-      <span class="deck-left">残り <b id="deckLeft">52</b> 枚</span>
+      <span>累計 <b id="totalDrinks" style="color:var(--danger)">0</b> 杯</span>
+      <span>最長 <b id="bestStreak" style="color:var(--gold)">0</b> 連続</span>
+      <span class="deck-left">残り <b id="deckLeft">52</b></span>
     </div>
 
     <div class="stake-row">
@@ -538,10 +454,10 @@
       <button class="btn-hi" id="hiBtn"><span class="arrow-icon">▲</span>HI</button>
       <button class="btn-lo" id="loBtn"><span class="arrow-icon">▼</span>LO</button>
     </div>
-    <button class="safe-btn" id="safeBtn" disabled>SAFE で次の人へ</button>
+    <button class="safe-btn" id="safeBtn" disabled>SAFE で連続リセット</button>
 
     <div class="footer-actions">
-      <button class="btn btn-ghost" id="quitBtn">対局を終了</button>
+      <button class="btn btn-ghost" id="quitBtn">セッション終了</button>
     </div>
 
     <!-- Result overlay (per round result) -->
@@ -552,18 +468,24 @@
     </div>
   </div>
 
-  <!-- ===== STANDINGS / END ===== -->
+  <!-- ===== SESSION END ===== -->
   <div class="screen" id="endScreen">
-    <div class="title" style="padding-top:14px">
-      <h1 style="font-size:clamp(28px,9vw,46px)">FINAL</h1>
-      <div class="jp">けっか</div>
+    <div class="title" style="padding-top:50px">
+      <h1 style="font-size:clamp(28px,9vw,46px)">SESSION</h1>
+      <div class="jp">セッション結果</div>
     </div>
-    <div class="panel">
-      <h2>累計杯数</h2>
-      <div class="standings" id="standings"></div>
+    <div class="panel" style="text-align:center;padding:24px 16px">
+      <div style="font-size:11px;letter-spacing:4px;color:var(--dim);margin-bottom:6px">累計</div>
+      <div style="font-family:'Inter',system-ui,sans-serif;font-size:64px;font-weight:900;line-height:1;color:var(--danger);text-shadow:0 0 30px rgba(255,77,110,0.4)">
+        <span id="finalDrinks">0</span><span style="font-size:24px;color:var(--steel-1);margin-left:6px;letter-spacing:2px">杯</span>
+      </div>
+      <div style="margin-top:18px;font-size:12px;letter-spacing:3px;color:var(--steel-1)">
+        最長連続 <b style="color:var(--gold);font-size:16px;letter-spacing:1px">
+          <span id="finalBest">0</span></b> 回
+      </div>
     </div>
     <div class="footer-actions">
-      <button class="btn btn-primary" id="restartBtn">もう一周</button>
+      <button class="btn btn-primary" id="restartBtn">もう一回</button>
       <button class="btn btn-ghost" id="resetBtn">最初から</button>
     </div>
   </div>
@@ -576,7 +498,7 @@
     <h2>RULES</h2>
     <dl>
       <dt>進行</dt>
-      <dd>順番にスマホを回す。各自、めくられたカードの<b>次のカード</b>が
+      <dd>めくられたカードの<b>次のカード</b>が
         <b>HI</b>（より大きい）か <b>LO</b>（より小さい）かを当てる。</dd>
 
       <dt>当たったら</dt>
@@ -584,10 +506,10 @@
 
       <dt>外したら</dt>
       <dd><b>「外したら ○杯」</b> の数を一気飲み。<br>
-        ターン終了、次の人へ。</dd>
+        連続成功はリセット。</dd>
 
       <dt>SAFE</dt>
-      <dd>1回でも当てた後なら、いつでも降りられる。<b>飲まずに</b>次の人へ。</dd>
+      <dd>1回でも当てた後ならいつでも降りられる。<b>飲まずに</b>連続をリセット。</dd>
 
       <dt>ステーク</dt>
       <dd>失敗時の杯数 = <b>連続成功 ÷ 5 + 1</b>（小数点切り捨て）<br>
@@ -610,9 +532,6 @@
 "use strict";
 
 // ─── State ───
-const STORAGE_KEY = "hi_low_v1";
-const MIN_PLAYERS = 2;
-const MAX_PLAYERS = 8;
 const RESHUFFLE_AT = 8; // reshuffle deck when this many cards remain
 
 const SUITS = [
@@ -629,33 +548,16 @@ const RANKS = [
   { v: 13, label: "K" },
 ];
 
-const FUNNY_NAMES = [
-  "酒豪", "ザル", "ベロベロ", "ほろ酔い", "下戸", "二日酔い", "顔面紅葉", "記憶喪失",
-  "翌日後悔", "終電マン", "ウーロン茶", "一気のヌシ", "顔面真っ赤", "酔拳",
-];
-
-let players = [];        // [{ name, drinks }]
-let currentIdx = 0;      // whose turn
 let deck = [];           // remaining cards
 let prevCard = null;     // currently visible card (the comparison card)
 let streak = 0;          // current streak count
+let totalDrinks = 0;     // session total
+let bestStreak = 0;      // longest streak this session
 let waiting = false;     // true while reveal animation in progress
 
 // Drink-on-fail formula: floor(streak / 5) + 1.
 // → 1杯 for streaks 0–4, 2杯 for 5–9, 3杯 for 10–14, …
-// Encourages going for longer streaks since the next failure isn't always
-// strictly worse than the current one.
 function stakeFor(s) { return Math.floor(s / 5) + 1; }
-
-// ─── Init ───
-function loadSaved() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
-  catch { return {}; }
-}
-function save(state) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
-}
-const saved = loadSaved();
 
 function $(id) { return document.getElementById(id); }
 function showScreen(name) {
@@ -668,64 +570,6 @@ function showToast(msg, ms = 2200) {
   t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), ms);
 }
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
-}
-function randomFunnyName() {
-  return FUNNY_NAMES[Math.floor(Math.random() * FUNNY_NAMES.length)];
-}
-
-// ─── Player setup ───
-function renderPlayerInputs() {
-  const list = $("playerInputs");
-  list.innerHTML = "";
-  const names = (saved.names && saved.names.length >= MIN_PLAYERS) ? saved.names : [randomFunnyName(), randomFunnyName()];
-  for (let i = 0; i < names.length; i++) {
-    addRow(names[i]);
-  }
-  updateCount();
-}
-function addRow(name = "") {
-  const list = $("playerInputs");
-  const row = document.createElement("div");
-  row.className = "player-row";
-  row.innerHTML = `
-    <span class="num">${list.children.length + 1}</span>
-    <input type="text" maxlength="10" autocomplete="off" placeholder="プレイヤー${list.children.length + 1}" value="${escapeHtml(name)}">
-    <button class="rm" aria-label="削除">×</button>
-  `;
-  row.querySelector(".rm").addEventListener("click", () => {
-    if ($("playerInputs").children.length <= MIN_PLAYERS) return;
-    row.remove();
-    renumber();
-    updateCount();
-  });
-  list.appendChild(row);
-}
-function renumber() {
-  [...$("playerInputs").children].forEach((row, i) => {
-    row.querySelector(".num").textContent = i + 1;
-    const inp = row.querySelector("input");
-    if (inp.placeholder.startsWith("プレイヤー")) inp.placeholder = `プレイヤー${i + 1}`;
-  });
-  // Re-evaluate remove buttons
-  const isMin = $("playerInputs").children.length <= MIN_PLAYERS;
-  [...$("playerInputs").querySelectorAll(".rm")].forEach(b => b.disabled = isMin);
-}
-function updateCount() {
-  const n = $("playerInputs").children.length;
-  $("playerCountLabel").textContent = `(${n}/${MAX_PLAYERS})`;
-  $("addPlayerBtn").disabled = n >= MAX_PLAYERS;
-  renumber();
-}
-
-$("addPlayerBtn").addEventListener("click", () => {
-  if ($("playerInputs").children.length >= MAX_PLAYERS) return;
-  addRow(randomFunnyName());
-  updateCount();
-});
 
 // ─── Deck ───
 function buildShuffledDeck() {
@@ -740,7 +584,7 @@ function buildShuffledDeck() {
 function ensureDeck() {
   if (deck.length <= RESHUFFLE_AT) {
     deck = buildShuffledDeck();
-    // remove the prevCard from the new deck (so it can't appear next)
+    // remove prevCard from the new deck so the same exact card can't appear next
     if (prevCard) {
       const idx = deck.findIndex(c => c.v === prevCard.v && c.suit.sym === prevCard.suit.sym);
       if (idx >= 0) deck.splice(idx, 1);
@@ -784,41 +628,12 @@ function cardHTML(card, opts = {}) {
 }
 
 // ─── Game flow ───
-$("startBtn").addEventListener("click", () => {
-  const inputs = [...$("playerInputs").querySelectorAll("input")];
-  const names = inputs.map(i => i.value.trim()).filter(Boolean);
-  if (names.length < MIN_PLAYERS) {
-    showToast("プレイヤーは2人以上");
-    return;
-  }
-  // de-duplicate identical names by appending #2, #3, ...
-  const seen = {};
-  const unique = names.map(n => {
-    const c = (seen[n] = (seen[n] || 0) + 1);
-    return c === 1 ? n : `${n}#${c}`;
-  });
-  players = unique.map(n => ({ name: n, drinks: 0 }));
-  save({ names: unique });
-  currentIdx = 0;
+function startSession() {
   deck = buildShuffledDeck();
-  prevCard = null;
+  prevCard = drawCard();
   streak = 0;
-  startTurn();
-});
-
-function startTurn() {
-  $("turnName").textContent = players[currentIdx].name;
-  showScreen("turn");
-}
-$("turnScreen").addEventListener("click", () => {
-  if (!$("turnScreen").classList.contains("active")) return;
-  enterPlay();
-});
-function enterPlay() {
-  // Carry the previous card forward so consecutive players see continuity.
-  // First turn ever (or after restart) draws the starting card here.
-  if (!prevCard) prevCard = drawCard();
-  streak = 0;
+  totalDrinks = 0;
+  bestStreak = 0;
   showScreen("play");
   updatePlayUI();
   $("prevSlot").innerHTML = cardHTML(prevCard, { flipped: true, dealIn: true });
@@ -827,7 +642,8 @@ function enterPlay() {
 }
 
 function updatePlayUI() {
-  $("playWho").textContent = players[currentIdx].name;
+  $("totalDrinks").textContent = totalDrinks;
+  $("bestStreak").textContent = bestStreak;
   $("deckLeft").textContent = deck.length;
   $("streakNum").textContent = streak;
   const stake = stakeFor(streak);
@@ -841,14 +657,12 @@ function predict(choice) {
   if (waiting) return;
   waiting = true;
   const next = drawCard();
-  // Render face-down then flip
   $("nextSlot").innerHTML = cardHTML(next, { flipped: false });
-  // force a tick so the browser registers the un-flipped state
+  // double rAF so the browser commits the un-flipped state before we flip
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       const cardEl = $("nextSlot").querySelector(".card");
       cardEl.classList.add("flipped");
-      // After flip animation, decide outcome
       setTimeout(() => resolveRound(next, choice), 850);
     });
   });
@@ -863,17 +677,16 @@ function resolveRound(next, choice) {
 
   if (correct) {
     streak++;
+    if (streak > bestStreak) bestStreak = streak;
     prevCard = next;
-    // show ok overlay briefly
-    showResult("ok", "正解!", `連続 <b>${streak}</b> 回 / 失敗で <span class="big">${stakeFor(streak)}</span>杯`);
+    showResult("ok", "正解!", `連続 <b>${streak}</b> 回 / 次の失敗で <span class="big">${stakeFor(streak)}</span>杯`);
   } else {
     const drink = stakeFor(streak);
-    players[currentIdx].drinks += drink;
-    // The revealed card becomes the next player's starting card so the deck
-    // advances continuously across turns instead of stalling on whatever
-    // value the previous player happened to fail on.
+    totalDrinks += drink;
+    // The revealed card becomes the new starting card so the deck
+    // advances continuously between rounds.
     prevCard = next;
-    // shake the failed card
+    streak = 0;
     const cardEl = $("nextSlot").querySelector(".card");
     if (cardEl) cardEl.classList.add("shake");
     showResult("ng", "外れ", `<span class="big">${drink}</span>杯 飲む`);
@@ -895,67 +708,31 @@ function hideResult() {
 $("continueBtn").addEventListener("click", () => {
   hideResult();
   waiting = false;
-  // If we just failed, pass to next player. If we just succeeded, refresh
-  // the play UI for the next prediction.
-  const verdict = $("verdict").classList;
-  if (verdict.contains("ng")) {
-    nextPlayer();
-  } else if (verdict.contains("safe")) {
-    nextPlayer();
-  } else {
-    // success — update for the next prediction with the new prevCard
-    $("prevSlot").innerHTML = cardHTML(prevCard, { flipped: true, dealIn: true });
-    $("nextSlot").innerHTML = cardHTML(null);
-    updatePlayUI();
-  }
+  // refresh the play UI with the (possibly new) prevCard
+  $("prevSlot").innerHTML = cardHTML(prevCard, { flipped: true, dealIn: true });
+  $("nextSlot").innerHTML = cardHTML(null);
+  updatePlayUI();
 });
-
-function nextPlayer() {
-  // Streak is already 0 on enterPlay; carry prevCard forward so the next
-  // player sees continuity (the last card revealed becomes their starter).
-  currentIdx = (currentIdx + 1) % players.length;
-  startTurn();
-}
 
 $("hiBtn").addEventListener("click", () => predict("hi"));
 $("loBtn").addEventListener("click", () => predict("lo"));
 $("safeBtn").addEventListener("click", () => {
   if (streak === 0 || waiting) return;
-  showResult("safe", "SAFE", `${players[currentIdx].name} は<br>飲まずに次の人へ`);
-});
-
-$("quitBtn").addEventListener("click", () => {
-  showEnd();
-});
-
-// ─── End / standings ───
-function showEnd() {
-  const sorted = [...players].sort((a, b) => b.drinks - a.drinks);
-  const max = sorted[0]?.drinks ?? 0;
-  const min = sorted[sorted.length - 1]?.drinks ?? 0;
-  const list = $("standings");
-  list.innerHTML = sorted.map(p => {
-    const isTop = p.drinks === max && max > 0;
-    const isBottom = p.drinks === min && min < max;
-    let cls = "standings-row";
-    if (isTop) cls += " bottom"; // most drinks = "loser" → red
-    else if (isBottom) cls += " top"; // fewest drinks = "winner" → gold
-    return `<div class="${cls}"><span class="nm">${escapeHtml(p.name)}</span><span class="ct">${p.drinks} 杯</span></div>`;
-  }).join("");
-  showScreen("end");
-}
-
-$("restartBtn").addEventListener("click", () => {
-  // Same players, drinks accumulate across rounds
-  currentIdx = 0;
-  deck = buildShuffledDeck();
-  prevCard = null;
+  // SAFE just resets the streak — no drink, deck untouched.
   streak = 0;
-  startTurn();
+  showResult("safe", "SAFE", `連続をリセット<br>飲まずに続行`);
 });
+
+$("startBtn").addEventListener("click", startSession);
+$("quitBtn").addEventListener("click", () => {
+  $("finalDrinks").textContent = totalDrinks;
+  $("finalBest").textContent = bestStreak;
+  showScreen("end");
+});
+$("restartBtn").addEventListener("click", startSession);
 $("resetBtn").addEventListener("click", () => {
-  players = [];
-  prevCard = null;
+  totalDrinks = 0;
+  bestStreak = 0;
   showScreen("enter");
 });
 
@@ -966,8 +743,6 @@ $("rulesOverlay").addEventListener("click", (e) => {
   $("rulesOverlay").classList.remove("show");
 });
 
-// ─── Boot ───
-renderPlayerInputs();
 document.addEventListener("gesturestart", e => e.preventDefault());
 </script>
 </body>
